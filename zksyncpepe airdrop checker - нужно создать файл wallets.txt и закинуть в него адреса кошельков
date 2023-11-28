@@ -1,0 +1,35 @@
+import time
+import requests
+import json
+
+headers = {
+    'sec-ch-ua': '"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
+    'Accept': 'application/json, text/plain, */*',
+    'Referer': 'https://www.zksyncpepe.com/airdrop',
+    'sec-ch-ua-mobile': '?0',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+    'X-KL-saas-Ajax-Request': 'Ajax_Request',
+    'sec-ch-ua-platform': '"Windows"',
+}
+
+with open("wallets.txt", "r") as f:
+    adresses = [row.strip() for row in f if row.strip()]
+
+for address in adresses:
+
+    response = requests.get(
+        f'https://www.zksyncpepe.com/resources/amounts/{address.lower()}.json',
+        headers=headers,
+    )
+
+    try:
+        if isinstance(json.loads(response.text), list):
+            with open('wallets_with_drop.txt', 'a') as output:
+                print(f'{address}:{(json.loads(response.text))}', file=output)
+
+
+    except Exception as err:
+
+        print(f'{address}: You are not eligible')
+
+    time.sleep(2)
